@@ -94,9 +94,10 @@
 #define SC16IS750_INT_RHR (0X01)
 
 // Application Related
-
-// #define     SC16IS750_CRYSTCAL_FREQ (14745600UL)
+#ifndef SC16IS750_CRYSTCAL_FREQ
+// #define SC16IS750_CRYSTCAL_FREQ (14745600UL)
 #define SC16IS750_CRYSTCAL_FREQ (1843200UL)
+#endif
 
 // #define     SC16IS750_CRYSTCAL_FREQ (16000000UL)
 // #define     SC16IS750_DEBUG_PRINT   (1)
@@ -118,7 +119,7 @@ private:
   SC16IS752 &sc16is752;
 
 public:
-  SC16IS752_Stream(uint8_t channel, SC16IS752 &sci16is752);
+  SC16IS752_Stream(uint8_t _channel, SC16IS752 &_sci16is752);
 
   size_t write(uint8_t val) override; 
   int available() override;
@@ -128,10 +129,6 @@ public:
 
 class SC16IS752
 {
-private:
-  SC16IS752_Stream streamChannelA;
-  SC16IS752_Stream streamChannelB;
-
 public:
   SC16IS752(uint8_t prtcl = SC16IS750_PROTOCOL_I2C,
             uint8_t addr = SC16IS750_ADDRESS_AD);
@@ -164,9 +161,13 @@ public:
   void ModemPin(uint8_t gpio); // gpio == 0, gpio[7:4] are modem pins, gpio == 1 gpio[7:4] are gpios
   void GPIOLatch(uint8_t latch);
 
-  Stream * getStream(uint8_t channel);
+  SC16IS752_Stream & getStream(uint8_t channel);
 
 private:
+  
+  SC16IS752_Stream streamChannelA;
+  SC16IS752_Stream streamChannelB;
+  
   int peek_buf[2] = {-1, -1};
   uint8_t peek_flag[2] = {0, 0};
   uint8_t fifo_available[2] = {0, 0};

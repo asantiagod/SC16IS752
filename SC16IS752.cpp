@@ -414,12 +414,12 @@ void SC16IS752::GPIOLatch(uint8_t latch)
   WriteRegister(SC16IS752_CHANNEL_BOTH, SC16IS750_REG_IOCONTROL, temp_iocontrol);
 }
 
-Stream *SC16IS752::getStream(uint8_t channel)
+SC16IS752_Stream & SC16IS752::getStream(uint8_t channel)
 {
   if(channel == SC16IS752_CHANNEL_A)
-    return &streamChannelA;
+    return streamChannelA;
   else
-    return &streamChannelB;
+    return streamChannelB;
 }
 
 void SC16IS752::InterruptControl(uint8_t channel, uint8_t int_ena)
@@ -684,8 +684,8 @@ int SC16IS752::peek(uint8_t channel)
   return peek_buf[channel];
 }
 
-SC16IS752_Stream::SC16IS752_Stream(uint8_t channel, SC16IS752 &sci16is752): channel(channel),
-                                                                            sc16is752(sc16is752)
+SC16IS752_Stream::SC16IS752_Stream(uint8_t _channel, SC16IS752 &_sc16is752): channel(_channel),
+                                                                            sc16is752(_sc16is752)
 {  
 }
 
