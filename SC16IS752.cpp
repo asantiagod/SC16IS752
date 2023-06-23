@@ -36,7 +36,9 @@
 #endif // ifdef __AVR__
 
 
-SC16IS752::SC16IS752(uint8_t prtcl, uint8_t addr_sspin) : initialized(false)
+SC16IS752::SC16IS752(uint8_t prtcl, uint8_t addr_sspin) : initialized(false),
+                                                          streamChannelA(SC16IS752_CHANNEL_A, *this),
+                                                          streamChannelB(SC16IS752_CHANNEL_B, *this)
 {
   protocol = prtcl;
 
@@ -412,6 +414,14 @@ void SC16IS752::GPIOLatch(uint8_t latch)
   WriteRegister(SC16IS752_CHANNEL_BOTH, SC16IS750_REG_IOCONTROL, temp_iocontrol);
 }
 
+Stream *SC16IS752::getStream(uint8_t channel)
+{
+  if(channel == SC16IS752_CHANNEL_A)
+    return &streamChannelA;
+  else
+    return &streamChannelB;
+}
+
 void SC16IS752::InterruptControl(uint8_t channel, uint8_t int_ena)
 {
   WriteRegister(channel, SC16IS750_REG_IER, int_ena);
@@ -672,4 +682,29 @@ int SC16IS752::peek(uint8_t channel)
   }
 
   return peek_buf[channel];
+}
+
+SC16IS752_Stream::SC16IS752_Stream(uint8_t channel, SC16IS752 &sci16is752): channel(channel),
+                                                                            sc16is752(sc16is752)
+{  
+}
+
+size_t SC16IS752_Stream::write(uint8_t val)
+{
+  return sc16is752.write(channel, val);
+}
+
+int SC16IS752_Stream::available()
+{
+  return sc16is752.available(channel);
+}
+
+int SC16IS752_Stream::read()
+{
+  return sc16is752.read(channel);
+}
+
+int SC16IS752_Stream::peek()
+{
+  return sc16is752.peek(channel);
 }
