@@ -708,3 +708,8 @@ int SC16IS752_Stream::peek()
 {
   return sc16is752.peek(channel);
 }
+
+void SC16IS752_Stream::flush()
+{
+  sc16is752.flush(channel);
+}

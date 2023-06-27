@@ -125,6 +125,7 @@ public:
   int available() override;
   int read() override;
   int peek() override;
+  void flush() override;
 };
 
 class SC16IS752
@@ -165,6 +166,8 @@ public:
 
 private:
   
+  bool initialized = false;
+
   SC16IS752_Stream streamChannelA;
   SC16IS752_Stream streamChannelB;
   
@@ -173,7 +176,6 @@ private:
   uint8_t fifo_available[2] = {0, 0};
   uint8_t device_address_sspin;
   uint8_t protocol;
-  bool initialized = false;
 
   //	uint32_t timeout;
   void Initialize();
