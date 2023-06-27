@@ -132,7 +132,8 @@ class SC16IS752
 {
 public:
   SC16IS752(uint8_t prtcl = SC16IS750_PROTOCOL_I2C,
-            uint8_t addr = SC16IS750_ADDRESS_AD);
+            uint8_t addr = SC16IS750_ADDRESS_AD,
+            unsigned long crystalFreq = SC16IS750_CRYSTCAL_FREQ);
   void begin(uint32_t baud_A,
              uint32_t baud_B);
   void beginA(uint32_t baud_A);
@@ -165,8 +166,6 @@ public:
   SC16IS752_Stream & getStream(uint8_t channel);
 
 private:
-  
-  bool initialized = false;
 
   SC16IS752_Stream streamChannelA;
   SC16IS752_Stream streamChannelB;
@@ -176,6 +175,8 @@ private:
   uint8_t fifo_available[2] = {0, 0};
   uint8_t device_address_sspin;
   uint8_t protocol;
+  bool initialized;
+  unsigned long crystalFreq;
 
   //	uint32_t timeout;
   void Initialize();

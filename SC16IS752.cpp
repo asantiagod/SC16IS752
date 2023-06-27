@@ -36,9 +36,12 @@
 #endif // ifdef __AVR__
 
 
-SC16IS752::SC16IS752(uint8_t prtcl, uint8_t addr_sspin) : initialized(false),
-                                                          streamChannelA(SC16IS752_CHANNEL_A, *this),
-                                                          streamChannelB(SC16IS752_CHANNEL_B, *this)
+SC16IS752::SC16IS752(uint8_t prtcl,
+                     uint8_t addr_sspin,
+                     unsigned long _crystalFreq) : streamChannelA(SC16IS752_CHANNEL_A, *this),
+                                                   streamChannelB(SC16IS752_CHANNEL_B, *this),
+                                                   initialized(false),
+                                                   crystalFreq(_crystalFreq)
 {
   protocol = prtcl;
 
@@ -209,7 +212,7 @@ int16_t SC16IS752::SetBaudrate(uint8_t channel, uint32_t baudrate) // return err
     prescaler = 4;
   }
 
-  divisor = (SC16IS750_CRYSTCAL_FREQ / prescaler) / (baudrate * 16);
+  divisor = (crystalFreq / prescaler) / (baudrate * 16);
 
   temp_lcr  = ReadRegister(channel, SC16IS750_REG_LCR);
   temp_lcr |= 0x80;
@@ -224,7 +227,7 @@ int16_t SC16IS752::SetBaudrate(uint8_t channel, uint32_t baudrate) // return err
   WriteRegister(channel, SC16IS750_REG_LCR, temp_lcr);
 
 
-  actual_baudrate = (SC16IS750_CRYSTCAL_FREQ / prescaler) / (16 * divisor);
+  actual_baudrate = (crystalFreq / prescaler) / (16 * divisor);
   error           = ((float)actual_baudrate - baudrate) * 1000 / baudrate;
 #ifdef  SC16IS750_DEBUG_PRINT
   Serial.print("Desired baudrate: ");
